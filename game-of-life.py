@@ -1,8 +1,12 @@
+from ctypes import sizeof
 import tkinter as tk
 import time
 
 class gameOptions:
     def __init__(self):
+        # Titel
+        root.title("Opties - Game of Py")
+
         # Parents
         self.container = tk.Frame(root)
         self.button_group = tk.Frame(self.container)        
@@ -10,7 +14,7 @@ class gameOptions:
         # Grootte
         self.size_label = tk.Label(self.container, text="Grootte:")
         self.size_label.grid(column=0, row=0, sticky="sw")
-        self.size_input = tk.Scale(self.container, from_=1, to=15, orient=tk.HORIZONTAL)
+        self.size_input = tk.Scale(self.container, from_=1, to=25, orient=tk.HORIZONTAL)
         self.size_input.grid(column=1, row=0)
 
         # Minimum aantal buren om te overleven
@@ -34,7 +38,7 @@ class gameOptions:
         # Aantal generaties
         self.generations_label = tk.Label(self.container, text="Aantal generaties")
         self.generations_label.grid(column=0, row=4, sticky="sw")
-        self.generations_input = tk.Scale(self.container, from_=1, to=50, orient=tk.HORIZONTAL)
+        self.generations_input = tk.Scale(self.container, from_=1, to=200, orient=tk.HORIZONTAL)
         self.generations_input.grid(column=1, row=4)
 
         self.button_group.grid(row=5,sticky="w")
@@ -60,6 +64,7 @@ class gameOptions:
 
     def submit(self):
 
+        # Zet de opties in een dictionary
         self.options = {
             "size": self.size_input.get(),
             "cel_min": self.cel_min_input.get(),
@@ -69,11 +74,15 @@ class gameOptions:
         }
                           
         self.container.forget()
-        
+
+        # Pass de opties naar het volgende scherm
         gameInput(self.options)
     
 class gameInput:
     def __init__(self, options):
+        # Titel
+        root.title("Invoer - Game of Py")
+
         self.options = options
 
         self.container = tk.Frame(root)
@@ -130,6 +139,8 @@ class gameInput:
 
 class gameOfLife:
     def __init__(self, options, bord):
+        # Titel
+        root.title("Simulatie - Game of Py")
         self.options = options
         self.bord = bord
 
@@ -145,7 +156,7 @@ class gameOfLife:
 
         for i in range(self.generations):
             self.show()
-            time.sleep(0.2)
+            time.sleep(0.1)
             self.update()
 
 
@@ -179,19 +190,37 @@ class gameOfLife:
             for j in range(-1,2):
                 # Tel de inhoud van de cel op
                 buren += self.bord[i + x][j + y]
+
         # Haal de cel zelf er van af
         buren -= self.bord[x][y]
         return buren
 
     def show(self):
+        # Verwijder alle cellen
         self.container.delete("all")
+
+        # Loop door het bord met i en j
         for i in range(self.size):
             for j in range(self.size):
+                # Lengte cel
+                cel_size = 20
+
+                # Coördinaten cel
+                x1 = cel_size * j
+                y1 = cel_size * i
+                x2 = x1 + cel_size
+                y2 = y1 + cel_size
+
+                # Check status van cel
                 if self.bord[i][j]:
-                    self.container.create_rectangle(20 * j, 20 * i, 20 * j + 20, 20 * i + 20, fill='#FFFFFF')
+                    # Cel is dood
+                    self.container.create_rectangle(x1, y1, x2, y2, fill='#FFFFFF')
                 else:
-                    self.container.create_rectangle(20 * j, 20 * i, 20 * j + 20, 20 * i + 20, fill="#000000")
-        root.update()
+                    # Cel is levend
+                    self.container.create_rectangle(x1, y1, x2, y2, fill="#000000")
+                    
+        # Update 
+        root.update_idletasks()
 
 
 
